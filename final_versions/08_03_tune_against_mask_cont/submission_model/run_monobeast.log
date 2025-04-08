@@ -1,0 +1,6 @@
+[2025-03-07 16:12:04,324][jax._src.xla_bridge][WARNING] - An NVIDIA GPU may be present on this machine, but a CUDA-enabled jaxlib is not installed. Falling back to cpu.
+[2025-03-07 16:14:03,520][root][INFO] - Loading frozen actor model from /workspaces/lux-ai2/toad_fork/lux_ai/torchbeast/../../models/06_03_mask_exp/200000000_weights.pt
+[2025-03-07 16:14:04,158][root][INFO] - Loading frozen actor model from /workspaces/lux-ai2/toad_fork/lux_ai/torchbeast/../../models/06_03_mask_exp/200000000_weights.pt
+[2025-03-07 16:14:04,783][root][INFO] - Loading frozen actor model from /workspaces/lux-ai2/toad_fork/lux_ai/torchbeast/../../models/06_03_mask_exp/200000000_weights.pt
+[2025-03-07 16:14:05,403][root][INFO] - Loading frozen actor model from /workspaces/lux-ai2/toad_fork/lux_ai/torchbeast/../../models/06_03_mask_exp/200000000_weights.pt
+[2025-03-07 16:17:48,294][root][INFO] - START ?

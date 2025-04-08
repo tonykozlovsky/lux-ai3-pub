@@ -1,0 +1,137 @@
+# pip3 install ../Lux-Design-S3/src/ && WANDB_API_KEY=_ TRAINING=1 USE_TORCH_COMPILE=1 TORCHINDUCTOR_COMPILE_THREADS=1 SMALL=0 python3 ./run_monobeast.py --config-name=two_gpu
+
+defaults:
+  - base  # Inherits from base.yaml
+
+enable_resnet: True
+enable_lstm: False
+
+enable_transformer: False # DEPRECATED
+n_transformer_blocks: 1 # DEPRECATED
+
+use_baseline_v2: False # False DEPRECATED should be True for new models
+
+enable_transformer_v2: True
+n_transformer_v2_blocks: 4
+
+transformer_dim_head: 16 # 16 WAS IN MAIN BUT NEED 32 HERE to match 128 hidden dim
+
+one_prediction_head: False # False DEPRECATED should be True for new models
+enable_per_unit_resnet: False # HEAVY
+enable_se_in_per_unit_resnet: False # True DEPRECATED should be False for new models
+
+use_embedding_input: False # True DEPRECATED should be False for new models
+
+#_________________________________
+
+name: two_gpu_testing
+
+#_________________________________
+
+use_bf16: True
+
+num_actors: 50
+num_buffers: 150 # bus error if not enough /dev/shm
+# 53 buffers of n_actor_envs=8 consumes 34G of /dev/shm (~82mb per env) WITH LSTM, WITHOUT - MUCH SMALLER !!!
+
+num_stats_buffers: 16
+
+n_actor_envs: 15
+batch_size: 30
+
+n_batch_prepare_processes: 1
+prepare_batches: 2
+
+## MODEL params
+model_arch: conv_model
+n_blocks: 8
+hidden_dim: 128
+embedding_dim: 32
+n_merge_layers: 1
+normalize: False # False better but trains slower
+# Conv-specific params
+kernel_size: 5
+
+
+## LOSS params
+
+prediction_cost: 1. # ???????? May be too much slower learning with 1. ?
+
+target_entropy_worker: 0.4
+target_entropy_worker_change_per_step: -0.3e-8
+target_entropy_sapper: 1.9
+target_entropy_sapper_change_per_step: -3.0e-8
+entropy_initial_multiplier_worker: 0.1
+entropy_initial_multiplier_sapper: 0.1
+entropy_mult_change_speed_per_step: 0.00000040000
+
+
+# Pretrained model for KL loss
+use_teacher: True
+use_old_teacher_loss: True # Not working if LSTM enabled in teacher
+
+only_teacher_loss: False
+frozen_teacher_both_sides: False
+frozen_teacher_sample: False
+
+# BEST MODEL EVER TEACHER
+#teacher_load_dir: ./shared/21_02_new_with_ticher_and_5_frozen_cont_5/
+#teacher_checkpoint_file: 094838400_weights.pt
+
+# SOME SMALLER MODEL FROM MAIN
+teacher_load_dir: ./shared/23_02_2_frozen/
+teacher_checkpoint_file: 100000512_weights.pt
+
+teacher_kl_cost: 0.8
+teacher_kl_cost_change_per_step: -1e-9
+teacher_baseline_cost: 0 # CHECK GAME RESULT SAME AS TEACHER
+imitation_cost: 0. # NOT WORKING FOR NOW
+
+# MISCELLANEOUS params
+n_learner_devices: 1 # 4
+n_actor_devices: 1 # 4
+
+update_actor_weigts_every_batches: 1 # is it needed ?
+
+
+# Continue from previous run
+#load_dir: ./models/24_02_test_x8/
+#checkpoint_file: 159837440_weights.pt
+#weights_only: True
+#load_optimizer: False
+#n_warmup_steps: 0
+
+
+# Enabled if  num_frozen_model_actors > 0
+frozen_actor_checkpoint_paths:
+  # ALL BEST MODELS
+  #- ./shared/12_01_fix_batch_no_norm/100000512_weights.pt
+  #- ./shared/13_02_big_with_ticher_and_frozen/097680384_weights.pt
+  #- ./shared/14_02_big_with_ticher_and_2_frozen/100000512_weights.pt
+  #- ./shared/15_02_big_with_ticher_and_3_frozen/094222848_weights.pt
+  #- ./shared/16_02_big_with_ticher_and_4_frozen/100000512_weights.pt
+  #- ./shared/19_02_new_with_ticher_and_5_frozen_cont_2/100000000_weights.pt
+  #- ./shared/20_02_new_with_ticher_and_5_frozen_cont_3/100000000_weights.pt
+  #- ./shared/21_02_new_with_ticher_and_5_frozen_cont_5/094838400_weights.pt
+  # MODELS FROM MAIN
+  - ./shared/12_01_fix_batch_no_norm/100000512_weights.pt
+  - ./shared/23_02_2_frozen/100000512_weights.pt
+change_frozen_actor_every_n_iters: 1000
+
+num_frozen_model_actors: 20    # its 33% of num_actors
+num_frozen_model_actors_buffers: 75 # bus error if not enough /dev/shm
+
+
+frozen_teacher_actors: 0  # NOT TESTED PROPERLY
+frozen_teacher_models_buffers: 0  # bus error if not enough /dev/shm
+
+
+behavior_cloning_actors: 0 # NOT WORKING YET
+behavior_cloning_actors_buffers: 0 # bus error if not enough /dev/shm
+
+
+# guarantee batches of different types ratio not depending on num_actors
+frozen_actor_probability: 0.33
+frozen_teacher_probability: 0. # NOT TESTED PROPERLY
+behavior_cloning_probability: 0. # NOT WORKING YET
+selfplay_probability: 1. # all remaining probability is for selfplay

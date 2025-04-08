@@ -1,0 +1,14 @@
+.idea/
+.ipynb_checkpoints/
+*.pyc
+*.swp
+__pycache__/
+toad_fork/outputs/
+4dee2d4064288_CLion-2024.1.6/
+jax_cache/
+versions
+toad_fork/models/
+toad_fork/submission_model/
+.DS_Store
+toad_fork/analytics/analytics.ipynb
+toad_fork/analytics/outputs/

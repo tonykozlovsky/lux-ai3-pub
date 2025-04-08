@@ -1,0 +1,15 @@
+target_entropy_worker 0.0007492800 _
+target_entropy_sapper 0.0019980800 _
+target_entropy_worker_change_per_step -0.0000000007 _
+target_entropy_sapper_change_per_step -0.0000000020 _
+entropy_multiplier_worker 0.0000000000 _
+entropy_multiplier_sapper 0.0000000000 _
+entropy_mult_change_speed_per_step 0.0000008000 _
+lmb 0.9000000000 _
+use_bf16 1.0000000000 _
+teacher_kl_cost 0.0100000000 _
+teacher_kl_cost_change_per_step 0.0000000000 _
+teacher_baseline_cost 0.0000000000 _
+prediction_cost 1.0000000000 _
+lr_lambda 0.0049952000 _
+lr_lambda_change_per_step -0.0000000050 _
